@@ -1,0 +1,27 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.env
+
+# Virtual environment
+virtualenv/
+.venv/
+env/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Docker
+*.dockerignore
+
+# Database
+*.sqlite3
+
+# Logs
+*.log
