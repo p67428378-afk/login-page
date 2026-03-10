@@ -31,7 +31,9 @@ def on_startup():
     # For demonstration, create a default user if not exists
     db = SessionLocal()
     if not db.query(User).filter(User.username == "testuser").first():
-        hashed_password = pwd_context.hash("testpassword")
+        # Use pbkdf2_sha256 for test user to avoid bcrypt issues in some test environments
+        test_pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+        hashed_password = test_pwd_context.hash("testpassword")
         db_user = User(username="testuser", hashed_password=hashed_password)
         db.add(db_user)
         db.commit()
