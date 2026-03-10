@@ -31,9 +31,8 @@ def on_startup():
     # For demonstration, create a default user if not exists
     db = SessionLocal()
     if not db.query(User).filter(User.username == "testuser").first():
-        salt = pwd_context.generate_salt()
-        hashed_password = pwd_context.hash("testpassword" + salt)
-        db_user = User(username="testuser", hashed_password=hashed_password, salt=salt)
+        hashed_password = pwd_context.hash("testpassword")
+        db_user = User(username="testuser", hashed_password=hashed_password)
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
@@ -45,7 +44,7 @@ app.add_middleware(
     allow_origins=["http://localhost:3000", "http://localhost:8000"],  # Adjust as needed for your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
 # Dependency to get DB session
@@ -57,13 +56,12 @@ def get_db():
         db.close()
 
 # Password hashing and verification
-def verify_password(plain_password, hashed_password, salt):
-    return pwd_context.verify(plain_password + salt, hashed_password)
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password):
-    salt = pwd_context.generate_salt()
-    hashed_password = pwd_context.hash(password + salt)
-    return hashed_password, salt
+    hashed_password = pwd_context.hash(password)
+    return hashed_password
 
 # OAuth2PasswordBearer for token-based authentication (optional, for future expansion)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -94,7 +92,7 @@ def decode_access_token(token: str):
 @app.post("/api/login")
 async def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == form_data.username).first()
-    if not user or not verify_password(form_data.password, user.hashed_password, user.salt):
+    if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid username or password",
