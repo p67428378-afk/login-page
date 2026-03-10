@@ -8,3 +8,4 @@ httpx==0.25.2
 python-jose
 python-multipart
 starlette==0.36.3
+bcrypt==3.2.0
