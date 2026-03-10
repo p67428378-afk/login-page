@@ -4,7 +4,7 @@ psycopg2-binary==2.9.9
 SQLAlchemy==2.0.28
 python-dotenv==1.0.1
 passlib[bcrypt]==1.7.4
-httpx
+httpx==0.25.2
 python-jose
 python-multipart
 starlette==0.36.3
